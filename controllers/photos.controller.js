@@ -8,13 +8,19 @@ exports.add = async (req, res) => {
     const file = req.files.file;
 
     if (title && author && email && file) {
+      const emailPattern = /^[a-zA-Z0-9.\-_]+@[a-z0-9]+\.[a-z]{2,3}$/;
+      const textPattern = /<|>/;
+
       const fileName = file.path.split('/').slice(-1)[0];
       const fileExt = fileName.split('.').slice(-1)[0];
 
       if (
         title.length <= 25 &&
         author.length <= 50 &&
-        (fileExt === 'jpg' || fileExt === 'png' || fileExt === 'gif')
+        emailPattern.test(email) &&
+        !textPattern.test(title) &&
+        !textPattern.test(author) &&
+        ['jpg', 'png', 'gif'].includes(fileExt)
       ) {
         const newPhoto = new Photo({
           title,
